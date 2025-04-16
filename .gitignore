@@ -31,3 +31,23 @@ build/
 
 ### VS Code ###
 .vscode/
+
+# === Runtime files ===
+*.log
+*.tmp
+
+# === Sensitive Configuration ===
+application.properties
+application.yml
+.env
+.env.*
+
+# === OS/System files ===
+.DS_Store
+Thumbs.db
+
+# === Database / dump files ===
+*.mv.db
+*.h2.db
+*.sqlite
+*.db
