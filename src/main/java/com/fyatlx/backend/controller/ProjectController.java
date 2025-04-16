@@ -11,6 +11,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.http.MediaType;
+
 
 @RestController
 @RequestMapping("/api/project")
@@ -19,33 +21,34 @@ public class ProjectController {
 
     private final EmailService emailService;
 
-    @PostMapping("/submit")
+    @PostMapping(value = "/submit", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> submitProject(
             @AuthenticationPrincipal User user,
-            @RequestPart("form") ProjectSubmissionRequest request,
+            @RequestPart("title") String title,
+            @RequestPart("description") String description,
             @RequestPart("file") MultipartFile file
     ) throws MessagingException {
-
+    
         String emailBody = String.format("""
-                New Project Submission:
-                
-                From: %s (%s)
-                Company: %s
-                Title: %s
-                Description: %s
-                """,
-                user.getName(), user.getEmail(), user.getCompany().getName(),
-                request.getTitle(), request.getDescription()
+            New Project Submission:
+    
+            From: %s (%s)
+            Company: %s
+            Title: %s
+            Description: %s
+            """,
+            user.getName(), user.getEmail(), user.getCompany().getName(),
+            title, description
         );
-
+    
         emailService.sendSubmissionEmail(
-                "your_email@gmail.com", // your inbox
+                "jawadsarfraz96@gmail.com",
                 "New Project Submission",
                 emailBody,
                 file.getOriginalFilename(),
                 file::getInputStream
         );
-
+    
         return ResponseEntity.ok("Submission sent successfully");
-    }
+    }    
 }

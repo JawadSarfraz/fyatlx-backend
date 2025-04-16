@@ -1,3 +1,5 @@
+package com.fyatlx.backend.dto;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
