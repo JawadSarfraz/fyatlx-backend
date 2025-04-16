@@ -22,4 +22,24 @@ public class ProfileController {
         Company company = user.getCompany();
         return ResponseEntity.ok(company);
     }
+
+    @PutMapping("/update")
+    public ResponseEntity<?> updateProfile(
+            @AuthenticationPrincipal User user,
+            @RequestBody CompanyUpdateRequest request
+    ) {
+        Company company = user.getCompany();
+        company.setDescription(request.getDescription());
+        company.setCountry(request.getCountry());
+        company.setCity(request.getCity());
+        company.setSize(request.getSize());
+        company.setCertifications(request.getCertifications());
+        company.setServicesOffered(request.getServicesOffered());
+        company.setHighlightProject(request.getHighlightProject());
+        company.setMachinery(request.getMachinery());
+
+        companyRepository.save(company);
+
+        return ResponseEntity.ok(company);
+    }
 }
