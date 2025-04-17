@@ -1,12 +1,15 @@
 package com.fyatlx.backend.service;
 
+import com.fyatlx.backend.entity.Project;
 import com.fyatlx.backend.entity.User;
-import com.fyatlx.backend.entity.Role;
-import com.fyatlx.backend.entity.Company;
+import com.fyatlx.backend.repository.ProjectRepository;
 import com.fyatlx.backend.repository.UserRepository;
-import com.fyatlx.backend.repository.RoleRepository;
-import com.fyatlx.backend.repository.CompanyRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
+import java.time.LocalDate;
 
 @Service
 @RequiredArgsConstructor
