@@ -1,8 +1,8 @@
 package com.fyatlx.backend.entity;
 
 import jakarta.persistence.*;
-import lombok.*;
-import java.time.LocalDateTime;
+import lombok.Data;
+import java.time.LocalDate;
 
 @Entity
 @Data
@@ -23,6 +23,7 @@ public class Project {
     @Lob
     private byte[] fileData;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
     private User user;
 }
