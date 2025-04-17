@@ -69,5 +69,17 @@ public class ProjectController {
         // In MVP: We just log & return response
         return ResponseEntity.ok("Project received!");
     }
+    @PostMapping("/submit")
+    public ResponseEntity<?> submitProject(
+        @RequestParam("title") String title,
+        @RequestParam("description") String description,
+        @RequestParam("estimatedBudget") String estimatedBudget,
+        @RequestParam("deadline") String deadline,
+        @RequestParam(value = "attachedFile", required = false) MultipartFile attachedFile,
+        Principal principal
+    ) {
+        projectService.submitProject(title, description, estimatedBudget, deadline, attachedFile, principal.getName());
+        return ResponseEntity.ok("Project submitted");
+    }
 
 }
