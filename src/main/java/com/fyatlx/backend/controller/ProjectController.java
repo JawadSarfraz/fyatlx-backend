@@ -12,6 +12,10 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.http.MediaType;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.http.ResponseEntity;
+
 
 
 @RestController
@@ -50,5 +54,20 @@ public class ProjectController {
         );
     
         return ResponseEntity.ok("Submission sent successfully");
-    }    
+    }
+    @PostMapping("/submit")
+    public ResponseEntity<String> submitProject(
+            @RequestParam("title") String title,
+            @RequestParam("description") String description,
+            @RequestParam("estimatedBudget") String budget,
+            @RequestParam("deadline") String deadline,
+            @RequestParam(value = "attachedFile", required = false) MultipartFile file
+    ) {
+        // You can log or save file here
+        System.out.println("Received file: " + (file != null ? file.getOriginalFilename() : "No File"));
+
+        // In MVP: We just log & return response
+        return ResponseEntity.ok("Project received!");
+    }
+
 }
