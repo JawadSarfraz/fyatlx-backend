@@ -52,4 +52,10 @@ public class ProjectController {
 
         return ResponseEntity.ok("Project submitted & email sent!");
     }
+    @GetMapping("/mine")
+    public ResponseEntity<List<ProjectDto>> getUserProjects(@AuthenticationPrincipal User user) {
+        List<Project> projects = projectRepository.findByUser(user);
+        return ResponseEntity.ok(projects.stream().map(ProjectDto::from).toList());
+    }
+
 }
