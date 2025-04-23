@@ -50,4 +50,4 @@ Thumbs.db
 *.mv.db
 *.h2.db
 *.sqlite
-*.db
+*.dbsrc/main/resources/application.properties
