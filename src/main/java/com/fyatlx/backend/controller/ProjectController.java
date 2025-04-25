@@ -106,3 +106,4 @@ public class ProjectController {
 
         return ResponseEntity.ok("Project submitted! (email sending skipped)");
     }
+}
