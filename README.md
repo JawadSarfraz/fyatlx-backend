@@ -1,10 +1,10 @@
-# 🌞 FYATLX Backend
+# FYATLX Backend
 
 This is the backend service for the FYATLX B2B solar project marketplace platform. It's built with **Spring Boot**, and provides RESTful APIs for user authentication, project submissions, and user-specific project management.
 
 ---
 
-## 🚀 Features
+## Features
 
 - ✅ JWT-based Authentication (Register/Login)
 - ✅ Role-based user registration (EPC/Developer, Construction Team, etc.)
@@ -16,7 +16,7 @@ This is the backend service for the FYATLX B2B solar project marketplace platfor
 
 ---
 
-## 📦 Tech Stack
+## Tech Stack
 
 - Java 17
 - Spring Boot 3.x
@@ -27,7 +27,7 @@ This is the backend service for the FYATLX B2B solar project marketplace platfor
 
 ---
 
-## 🛠️ Setup & Run (Dev)
+## Setup & Run (Dev)
 
 ```bash
 # Clone repo
@@ -40,3 +40,19 @@ cd fyatlx-backend
 # Run with Maven (tests skipped)
 ./mvnw clean install -DskipTests
 ./mvnw spring-boot:run
+
+```
+
+## application.properties (local dev)
+
+spring.datasource.url=jdbc:postgresql://localhost:5432/fyatlx
+spring.datasource.username=your_db_user
+spring.datasource.password=your_db_password
+
+spring.jpa.hibernate.ddl-auto=update
+spring.jpa.show-sql=true
+
+# JWT
+jwt.secret=your_super_secret_key
+jwt.expiration=86400000
+
