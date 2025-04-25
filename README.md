@@ -56,3 +56,75 @@ spring.jpa.show-sql=true
 jwt.secret=your_super_secret_key
 jwt.expiration=86400000
 
+
+
+
+
+
+
+
+
+
+
+
+
+## 🚀 Deployment (Production: EC2 + Nginx + SSL)
+
+1. Build the JAR:
+
+```bash
+./mvnw clean package -DskipTests
+```
+
+2. Copy `.jar` to EC2 instance:
+
+```bash
+scp target/backend-0.0.1-SNAPSHOT.jar ubuntu@<your-ec2-ip>:~/fyatlx-backend/
+```
+
+3. Create external `application.properties` on EC2:
+
+```bash
+nano ~/application.properties
+# Paste the production version of configs
+```
+
+4. Start the app:
+
+```bash
+java -jar target/backend-0.0.1-SNAPSHOT.jar --spring.config.location=/home/ubuntu/application.properties
+```
+
+---
+
+## 🌍 CORS Setup (for Frontend)
+
+CORS is configured in `CorsConfig.java`:
+
+```java
+.allowedOrigins(
+    "https://gentle-truffle-fd4dd0.netlify.app", // production frontend
+    "http://localhost:5173"                     // local dev
+)
+```
+
+---
+
+## ✅ API Endpoints
+
+### 🔐 Auth
+- `POST /api/auth/register`
+- `POST /api/auth/login`
+
+### 📦 Projects
+- `POST /api/project/submit` (multipart with file)
+- `GET /api/project/mine` (JWT required)
+
+---
+
+## ⚠️ Known Issues
+
+- EmailService must be commented out if mail credentials are not configured.
+- Spring Mail dependency can be excluded from production if unused.
+
+---
