@@ -24,38 +24,77 @@ public class ProjectController {
     private final ProjectRepository projectRepository;
 
     @PostMapping(value = "/submit", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<?> submitProject(
-            @AuthenticationPrincipal User user,
-            @RequestParam("title") String title,
-            @RequestParam("description") String description,
-            @RequestParam("estimatedBudget") String budget,
-            @RequestParam("deadline") String deadline,
-            @RequestParam(value = "attachedFile", required = false) MultipartFile attachedFile
-    ) throws MessagingException {
-        String emailBody = String.format("""
-                New Project Submission:
+public ResponseEntity<?> submitProject(
+        @AuthenticationPrincipal User user,
+        @RequestParam(value = "title", required = false) String title,
+        @RequestParam(value = "description", required = false) String description,
+        @RequestParam(value = "estimatedBudget", required = false) String budget,
+        @RequestParam(value = "deadline", required = false) String deadline,
+        @RequestParam(value = "attachedFile", required = false) MultipartFile attachedFile
+) throws MessagingException {
+    StringBuilder emailBodyBuilder = new StringBuilder();
 
-                From: %s (%s)
-                Company: %s
-                Title: %s
-                Description: %s
-                Budget: %s
-                Deadline: %s
-                """,
-                user.getName(), user.getEmail(), user.getCompany().getName(),
-                title, description, budget, deadline
-        );
+    emailBodyBuilder.append("New Project Submission:\n\n")
+            .append("From: ").append(user.getName()).append(" (").append(user.getEmail()).append(")\n")
+            .append("Company: ").append(user.getCompany().getName()).append("\n");
 
-        emailService.sendSubmissionEmail(
-                "jawadsarfraz96@gmail.com",
-                "New Project Submission",
-                emailBody,
-                attachedFile != null ? attachedFile.getOriginalFilename() : null,
-                attachedFile != null ? attachedFile::getInputStream : null
-        );
-
-        return ResponseEntity.ok("Project submitted & email sent!");
+    if (title != null) {
+        emailBodyBuilder.append("Title: ").append(title).append("\n");
     }
+    if (description != null) {
+        emailBodyBuilder.append("Description: ").append(description).append("\n");
+    }
+    if (budget != null) {
+        emailBodyBuilder.append("Budget: ").append(budget).append("\n");
+    }
+    if (deadline != null) {
+        emailBodyBuilder.append("Deadline: ").append(deadline).append("\n");
+    }
+
+    emailService.sendSubmissionEmail(
+            "jawadsarfraz96@gmail.com",
+            "New Project Submission",
+            emailBodyBuilder.toString(),
+            attachedFile != null ? attachedFile.getOriginalFilename() : null,
+            attachedFile != null ? attachedFile::getInputStream : null
+    );
+
+    return ResponseEntity.ok("Project submitted & email sent!");
+}
+
+//     @PostMapping(value = "/submit", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+//     public ResponseEntity<?> submitProject(
+//             @AuthenticationPrincipal User user,
+//             @RequestParam("title") String title,
+//             @RequestParam("description") String description,
+//             @RequestParam("estimatedBudget") String budget,
+//             @RequestParam("deadline") String deadline,
+//             @RequestParam(value = "attachedFile", required = false) MultipartFile attachedFile
+//     ) throws MessagingException {
+//         String emailBody = String.format("""
+//                 New Project Submission:
+
+//                 From: %s (%s)
+//                 Company: %s
+//                 Title: %s
+//                 Description: %s
+//                 Budget: %s
+//                 Deadline: %s
+//                 """,
+//                 user.getName(), user.getEmail(), user.getCompany().getName(),
+//                 title, description, budget, deadline
+//         );
+
+//         emailService.sendSubmissionEmail(
+//                 "jawadsarfraz96@gmail.com",
+//                 "New Project Submission",
+//                 emailBody,
+//                 attachedFile != null ? attachedFile.getOriginalFilename() : null,
+//                 attachedFile != null ? attachedFile::getInputStream : null
+//         );
+
+//         return ResponseEntity.ok("Project submitted & email sent!");
+//     }
 
     @GetMapping("/mine")
     public ResponseEntity<List<ProjectDto>> getUserProjects(@AuthenticationPrincipal User user) {
