@@ -24,43 +24,47 @@ public class ProjectController {
     private final ProjectRepository projectRepository;
 
     @PostMapping(value = "/submit", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-public ResponseEntity<?> submitProject(
-        @AuthenticationPrincipal User user,
-        @RequestParam(value = "title", required = false) String title,
-        @RequestParam(value = "description", required = false) String description,
-        @RequestParam(value = "estimatedBudget", required = false) String budget,
-        @RequestParam(value = "deadline", required = false) String deadline,
-        @RequestParam(value = "attachedFile", required = false) MultipartFile attachedFile
-) throws MessagingException {
-    StringBuilder emailBodyBuilder = new StringBuilder();
+        public ResponseEntity<?> submitProject(
+                @AuthenticationPrincipal User user,
+                @RequestParam(value = "title", required = false) String title,
+                @RequestParam(value = "description", required = false) String description,
+                @RequestParam(value = "estimatedBudget", required = false) String budget,
+                @RequestParam(value = "deadline", required = false) String deadline,
+                @RequestParam(value = "attachedFile", required = false) MultipartFile attachedFile
+        ) throws MessagingException {
 
-    emailBodyBuilder.append("New Project Submission:\n\n")
-            .append("From: ").append(user.getName()).append(" (").append(user.getEmail()).append(")\n")
-            .append("Company: ").append(user.getCompany().getName()).append("\n");
+        // Default values if any field is missing
+        title = (title != null) ? title : "N/A";
+        description = (description != null) ? description : "N/A";
+        budget = (budget != null) ? budget : "N/A";
+        deadline = (deadline != null) ? deadline : "N/A";
 
-    if (title != null) {
-        emailBodyBuilder.append("Title: ").append(title).append("\n");
-    }
-    if (description != null) {
-        emailBodyBuilder.append("Description: ").append(description).append("\n");
-    }
-    if (budget != null) {
-        emailBodyBuilder.append("Budget: ").append(budget).append("\n");
-    }
-    if (deadline != null) {
-        emailBodyBuilder.append("Deadline: ").append(deadline).append("\n");
-    }
+        String emailBody = String.format("""
+                New Project Submission:
 
-    emailService.sendSubmissionEmail(
-            "jawadsarfraz96@gmail.com",
-            "New Project Submission",
-            emailBodyBuilder.toString(),
-            attachedFile != null ? attachedFile.getOriginalFilename() : null,
-            attachedFile != null ? attachedFile::getInputStream : null
-    );
+                From: %s (%s)
+                Company: %s
+                Title: %s
+                Description: %s
+                Budget: %s
+                Deadline: %s
+                """,
+                user.getName(), user.getEmail(), 
+                (user.getCompany() != null ? user.getCompany().getName() : "No Company"),
+                title, description, budget, deadline
+        );
 
-    return ResponseEntity.ok("Project submitted & email sent!");
-}
+        emailService.sendSubmissionEmail(
+                "jawadsarfraz96@gmail.com",
+                "New Project Submission",
+                emailBody,
+                (attachedFile != null && !attachedFile.isEmpty()) ? attachedFile.getOriginalFilename() : null,
+                (attachedFile != null && !attachedFile.isEmpty()) ? attachedFile::getInputStream : null
+        );
+
+        return ResponseEntity.ok("Project submitted & email sent!");
+        }
+
 
 //     @PostMapping(value = "/submit", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
 //     public ResponseEntity<?> submitProject(
