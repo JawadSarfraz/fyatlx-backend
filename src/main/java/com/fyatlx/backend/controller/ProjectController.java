@@ -23,35 +23,50 @@ public class ProjectController {
     private final EmailService emailService;
     private final ProjectRepository projectRepository;
 
-    @PostMapping(value = "/submit", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-        public ResponseEntity<?> submitProject(
-                @AuthenticationPrincipal User user,
-                @RequestParam(value = "title", required = false) String title,
-                @RequestParam(value = "description", required = false) String description,
-                @RequestParam(value = "estimatedBudget", required = false) String budget,
-                @RequestParam(value = "deadline", required = false) String deadline,
-                @RequestParam(value = "attachedFile", required = false) MultipartFile attachedFile
-        ) throws MessagingException {
+        @PostMapping(value = "/submit", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<?> submitProject(
+            @AuthenticationPrincipal User user,
+            @RequestParam(value = "category", required = false) String category,
+            @RequestParam(value = "sizeMW", required = false) String sizeMW,
+            @RequestParam(value = "countryRegion", required = false) String countryRegion,
+            @RequestParam(value = "title", required = false) String title,
+            @RequestParam(value = "description", required = false) String description,
+            @RequestParam(value = "estimatedBudget", required = false) String estimatedBudget,
+            @RequestParam(value = "deadline", required = false) String deadline,
+            @RequestParam(value = "attachedFile", required = false) MultipartFile attachedFile,
+            @RequestParam(value = "additionalInfo", required = false) String additionalInfo
+    ) throws MessagingException {
 
-        // Default values if any field is missing
+        // Provide defaults if null
+        category = (category != null) ? category : "N/A";
+        sizeMW = (sizeMW != null) ? sizeMW : "N/A";
+        countryRegion = (countryRegion != null) ? countryRegion : "N/A";
         title = (title != null) ? title : "N/A";
         description = (description != null) ? description : "N/A";
-        budget = (budget != null) ? budget : "N/A";
+        estimatedBudget = (estimatedBudget != null) ? estimatedBudget : "N/A";
         deadline = (deadline != null) ? deadline : "N/A";
+        additionalInfo = (additionalInfo != null) ? additionalInfo : "N/A";
 
         String emailBody = String.format("""
                 New Project Submission:
 
                 From: %s (%s)
                 Company: %s
+
+                Category: %s
+                Size (MW): %s
+                Country/Region: %s
+
                 Title: %s
                 Description: %s
-                Budget: %s
+                Estimated Budget: %s
                 Deadline: %s
+                Additional Info: %s
                 """,
                 user.getName(), user.getEmail(), 
                 (user.getCompany() != null ? user.getCompany().getName() : "No Company"),
-                title, description, budget, deadline
+                category, sizeMW, countryRegion,
+                title, description, estimatedBudget, deadline, additionalInfo
         );
 
         emailService.sendSubmissionEmail(
@@ -63,8 +78,7 @@ public class ProjectController {
         );
 
         return ResponseEntity.ok("Project submitted & email sent!");
-        }
-
+    }
 
 //     @PostMapping(value = "/submit", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
 //     public ResponseEntity<?> submitProject(
