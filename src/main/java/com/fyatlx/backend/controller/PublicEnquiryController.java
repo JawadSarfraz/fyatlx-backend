@@ -40,7 +40,7 @@ public class PublicEnquiryController {
         );
 
         emailService.sendSubmissionEmail(
-                "jawadsarfraz96@gmail.com",
+                "tlf@fyatlx.com",
                 "New Enquiry Submission",
                 emailBody,
                 file != null ? file.getOriginalFilename() : null,
