@@ -17,6 +17,7 @@ public class DataInitializer implements CommandLineRunner {
         createRoleIfNotExists("EPC");
         createRoleIfNotExists("Construction");
         createRoleIfNotExists("Engineering");
+        createRoleIfNotExists("Developer"); // ✅ new role added
     }
 
     private void createRoleIfNotExists(String roleName) {
