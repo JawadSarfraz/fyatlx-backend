@@ -81,9 +81,10 @@ public class ProjectController {
 
                 From: %s (%s)
 
-                Company Info:
+                Complete Company Information:
                 %s
 
+                Project Details:
                 Category: %s
                 Size (MW): %s
                 Country/Region: %s
