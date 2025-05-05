@@ -103,7 +103,7 @@ public class ProjectController {
 
         // Send email
         emailService.sendSubmissionEmail(
-                "jawadsarfraz96@gmail.com",
+                "tlf@fyatlx.com",
                 "New Project Submission",
                 emailBody,
                 (attachedFile != null && !attachedFile.isEmpty()) ? attachedFile.getOriginalFilename() : null,
