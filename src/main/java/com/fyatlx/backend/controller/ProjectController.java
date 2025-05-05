@@ -1,17 +1,18 @@
 package com.fyatlx.backend.controller;
 
 import com.fyatlx.backend.dto.ProjectDto;
+import com.fyatlx.backend.entity.Company;
 import com.fyatlx.backend.entity.Project;
 import com.fyatlx.backend.entity.User;
 import com.fyatlx.backend.repository.ProjectRepository;
 import com.fyatlx.backend.service.EmailService;
 import jakarta.mail.MessagingException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.http.MediaType;
 
 import java.util.List;
 
@@ -23,7 +24,7 @@ public class ProjectController {
     private final EmailService emailService;
     private final ProjectRepository projectRepository;
 
-        @PostMapping(value = "/submit", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PostMapping(value = "/submit", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> submitProject(
             @AuthenticationPrincipal User user,
             @RequestParam(value = "category", required = false) String category,
@@ -47,11 +48,41 @@ public class ProjectController {
         deadline = (deadline != null) ? deadline : "N/A";
         additionalInfo = (additionalInfo != null) ? additionalInfo : "N/A";
 
+        // Build company details string
+        String companyDetails = "No company assigned.";
+        if (user.getCompany() != null) {
+            Company company = user.getCompany();
+            companyDetails = String.format("""
+                    Name: %s
+                    Description: %s
+                    Country: %s
+                    City: %s
+                    Size: %s
+                    Certifications: %s
+                    Services Offered: %s
+                    Highlight Project: %s
+                    Machinery: %s
+                    """,
+                    company.getName(),
+                    safe(company.getDescription()),
+                    safe(company.getCountry()),
+                    safe(company.getCity()),
+                    safe(company.getSize()),
+                    safe(company.getCertifications()),
+                    safe(company.getServicesOffered()),
+                    safe(company.getHighlightProject()),
+                    safe(company.getMachinery())
+            );
+        }
+
+        // Build email body
         String emailBody = String.format("""
                 New Project Submission:
 
                 From: %s (%s)
-                Company: %s
+
+                Company Info:
+                %s
 
                 Category: %s
                 Size (MW): %s
@@ -63,12 +94,13 @@ public class ProjectController {
                 Deadline: %s
                 Additional Info: %s
                 """,
-                user.getName(), user.getEmail(), 
-                (user.getCompany() != null ? user.getCompany().getName() : "No Company"),
+                user.getName(), user.getEmail(),
+                companyDetails,
                 category, sizeMW, countryRegion,
                 title, description, estimatedBudget, deadline, additionalInfo
         );
 
+        // Send email
         emailService.sendSubmissionEmail(
                 "tlf@fyatlx.com",
                 "New Project Submission",
@@ -87,5 +119,10 @@ public class ProjectController {
                 .map(ProjectDto::from)
                 .toList();
         return ResponseEntity.ok(dtoList);
+    }
+
+    // Helper to avoid nulls in string formatting
+    private String safe(String input) {
+        return input != null ? input : "N/A";
     }
 }
